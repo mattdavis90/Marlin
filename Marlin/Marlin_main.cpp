@@ -12445,6 +12445,19 @@ void process_parsed_command() {
   ok_to_send();
 }
 
+void setup_fan2_pin() {
+  SET_OUTPUT(KOSSEL_FAN2_PIN);
+  WRITE(KOSSEL_FAN2_PIN, LOW);
+}
+
+void fan2_scan() {
+  if (thermalManager.degHotend(0) > 60) {
+    WRITE(KOSSEL_FAN2_PIN, HIGH);
+  } else {
+    WRITE(KOSSEL_FAN2_PIN, LOW);
+  }
+}
+
 void process_next_command() {
   char * const current_command = command_queue[cmd_queue_index_r];
 
@@ -14471,6 +14484,7 @@ void setup() {
     fanmux_init();
   #endif
 
+  setup_fan2_pin();
   lcd_init();
 
   #if ENABLED(SHOW_BOOTSCREEN)
@@ -14557,6 +14571,7 @@ void loop() {
     card.checkautostart(false);
   #endif
 
+  fan2_scan();
   if (commands_in_queue) {
 
     #if ENABLED(SDSUPPORT)
